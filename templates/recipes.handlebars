@@ -22,15 +22,16 @@
             Yield: <span property="recipeYield">{{yield}}</span>
             Ingredients:
             <ul>
-                <li property="ingredients">3 or 4 ripe bananas, smashed</li>
-                <li property="ingredients">1 egg</li>
-                <li property="ingredients">3/4 cup of sugar</li>
+            {{#each ingredients}}
+                <li property="ingredients">{{this}}</li>
+            {{/each}}
             </ul>
             
             Instructions:
             <ol property="recipeInstructions">
-                <li>Preheat the oven to 350 degrees. Mix in the ingredients in a bowl. Add the flour last.</li>
-                <li>Pour the mixture into a loaf pan and bake for one hour.</li>
+            {{#each instructions}}
+                <li>{{this}}</li>
+            {{/each}}
             </ol>
             
             <span property="keywords">{{keywords}}</span>
