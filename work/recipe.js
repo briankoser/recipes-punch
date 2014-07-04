@@ -5,13 +5,21 @@ var fs = require('fs'),
 // get all files in folder
 // loop
 //  if isRecipe, call recipeToJson
-fs.readFile("Boxed Mac and Cheese that Doesn't Suck.txt", function(err, logData) {
+var title = "Boxed Mac and Cheese that Doesn't Suck";
+
+fs.readFile(title + '.txt', function(err, logData) {
     if (err) throw err;
     
-    var text = logData.toString();
+    var json = recipeToJson(logData.toString());
+    var fileName = title
+        .replace(/[^A-Za-z ]/g, '')
+        .replace(/ /g, '-')
+        .toLowerCase() + '.json';
     
-    console.log(recipeToJson(text));
+    fs.writeFile(fileName, JSON.stringify(json));
 });
+
+
 
 
 
@@ -51,19 +59,23 @@ function recipeToJson(src) {
         json['yield'] = yield[2];
     }
     
+    //['Name', 'Author', 'Description', 'Yield'].forEach(function() {
+    //    
+    //});
+    
     var ingredients = src
         .match(/(?:Ingredients:)([\s\S]*)(?=Directions)/)[1]
         .split('\n- ')
-        .filter(function(n){ return n != '' });
+        .filter(function(n){ return n.trim() != '' });
     ingredients.forEach(function(item, index){ ingredients[index] = item.trim()});
     json['ingredients'] = ingredients;
     
     var directions = src
         .match(/(?:Directions:)([\s\S]*)(?=Yield)/)[1]
         .split('\n- ')
-        .filter(function(n){ return n != '' });
+        .filter(function(n){ return n.trim() != '' });
     directions.forEach(function(item, index){ directions[index] = item.trim()});
-    json['directions'] = directions;
+    json['instructions'] = directions;
     
     return json;
 }
