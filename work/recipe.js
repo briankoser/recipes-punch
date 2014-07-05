@@ -1,31 +1,48 @@
 var fs = require('fs'),
-    extname = require('path').extname;
+    path = require('path');
 
+// var title = "Boxed Mac and Cheese that Doesn't Suck";
 
-// get all files in folder
-// loop
-//  if isRecipe, call recipeToJson
-var title = "Boxed Mac and Cheese that Doesn't Suck";
-
-fs.readFile(title + '.txt', function(err, logData) {
-    if (err) throw err;
+// fs.readFile(title + '.txt', function(err, logData) {
+    // if (err) throw err;
     
-    var json = recipeToJson(logData.toString());
-    var fileName = title
-        .replace(/[^A-Za-z ]/g, '')
-        .replace(/ /g, '-')
-        .toLowerCase() + '.json';
+    // var json = recipeToJson(logData.toString());
+    // var fileName = title
+        // .replace(/[^A-Za-z ]/g, '')
+        // .replace(/ /g, '-')
+        // .toLowerCase() + '.json';
     
-    fs.writeFile(fileName, JSON.stringify(json));
+    // fs.writeFile(fileName, JSON.stringify(json));
+// });
+
+var from = 'C:\\Users\\Brian\\Dropbox\\Shared\\Brian-Melissa Shared\\MelissaRecipes',
+    to = 'C:\\Users\\Brian\\Documents\\GitHub\\recipes-punch\\contents\\recipes';
+
+fs.readdir(from, function(err, files) {
+    if(err) throw err;
+    
+    files.map(function(file) {
+        return path.join(from, file);
+    }).filter(function(file) {
+        return fs.statSync(file).isFile() && isTextFile(file);
+    }).forEach(function(file) {
+        fs.readFile(file, function(err, fileContents) {
+            if (err) throw err;
+            
+            var json = recipeToJson(fileContents.toString());
+            var fileName = path.basename(file, '.txt')
+                .replace(/[^A-Za-z\- ]/g, '')
+                .replace(/ /g, '-')
+                .toLowerCase() + '.json';
+            
+            fs.writeFile(path.join(to, fileName), JSON.stringify(json));
+        });
+    });
 });
 
 
-
-
-
-
-function isRecipe(file){
-    return /\.recipe/.test(extname(file));
+function isTextFile(file){
+    return /\.txt/.test(path.extname(file));
 }
 
 function recipeToJson(src) {
@@ -39,7 +56,7 @@ function recipeToJson(src) {
     if (name != undefined)
     {
         json['name'] = name[2];
-    }
+        }
     
     var author = src.match(/(Author: )([A-Za-z0-9 ]+)/);
     if (author != undefined)
@@ -47,10 +64,10 @@ function recipeToJson(src) {
         json['author'] = author[2];
     }
     
-    var description = src.match(/(Comments: )([A-Za-z0-9 ]+)/);
-    if (description != undefined)
+    var comments = src.match(/(Comments: )([A-Za-z0-9 ]+)/);
+    if (comments != undefined)
     {
-        json['description'] = description[2];
+        json['comments'] = comments[2];
     }
     
     var yield = src.match(/(Yield: )([A-Za-z0-9\- ]+)/);
@@ -59,9 +76,16 @@ function recipeToJson(src) {
         json['yield'] = yield[2];
     }
     
-    //['Name', 'Author', 'Description', 'Yield'].forEach(function() {
-    //    
-    //});
+    // ['Name', 'Author', 'Comments', 'Yield'].forEach(function(item, index) {
+        // var pattern = '/(' + item + ": )([A-Za-z0-9&'\\- ]+)/";
+        // var regex = new RegExp(pattern);
+        // var field = src.match(regex);
+        // json['koser'] = field;
+        // if(field != undefined)
+        // {
+            // json[item.toLowerCase()] = field[2];
+        // }
+    // });
     
     var ingredients = src
         .match(/(?:Ingredients:)([\s\S]*)(?=Directions)/)[1]

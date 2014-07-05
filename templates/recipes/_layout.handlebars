@@ -17,8 +17,6 @@
             <meta property="dateModified" content="{{datemodified}}">{{datemodified}}</meta>
             <img property="image" src="{{image}}" />
             
-            <span property="description">{{description}}</span>
-          
             Yield: <span property="recipeYield">{{yield}}</span>
             Ingredients:
             <ul>
@@ -33,6 +31,8 @@
                 <li>{{this}}</li>
             {{/each}}
             </ol>
+            
+            <span property="description">{{comments}}</span>
             
             <span property="keywords">{{keywords}}</span>
         </article>
